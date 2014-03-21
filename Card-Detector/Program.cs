@@ -8,9 +8,9 @@ namespace Card_Detector
         private static void Main()
         {
             var detector = new Detector();
-            var cards = new[] { "371449635398431", "30569309025904", "6011111111111117", "3530111333300000", "5555555555554444", "4111111111111111" };
+            var cards = Detector.TestCards;
             foreach (string card in cards)
-                Console.WriteLine("{0}:{1}", card, detector.Detect(card));
+                Console.WriteLine("{0}:{1}, checksum valid={2}\t test card={3}", card, detector.Detect(card), detector.IsValidCheckSum(card), detector.IsTestCard(card));
         }
     }
 }

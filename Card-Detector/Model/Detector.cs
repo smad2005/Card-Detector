@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Card_Detector.Model
 {
@@ -17,14 +18,38 @@ namespace Card_Detector.Model
                 new Card {Name = "JCB", Regex = @"^(?:2131|1800|35\d{3})\d{11}$", LengthLimits = new []{15, 16}},
                 new Card {Name = "China UnionPay", Regex = "^62|88", LengthLimits =new []{16,17,18,19}}
             };
-
+       
+        public readonly static string[] TestCards =
+        {
+            "5105105105105100", "5555555555554444", "4222222222222", "4111111111111111",
+            "4012888888881881", "378282246310005","371449635398431","378734493671000",
+            "38520000023237","30569309025904","6011111111111117","6011000990139424",
+            "3530111333300000","3566002020360505"
+        };
 
         public string Detect(string cardnumber)
         {
             foreach (Card card in cardList)
-                if (card.Check(cardnumber))
+                if (IsValidCheckSum(cardnumber) && card.Check(cardnumber))
                     return card.Name;
             return string.Empty;
+        }
+
+        public bool IsValidCheckSum(string number)
+        {
+            var sum = 0;
+            for (int i = number.Length - 1; i >= 0; i--)
+            {
+                var digit = number[i] - '0';
+                digit *= (((number.Length - i - 1) & 1) == 0 ? 1 : 2);
+                sum += digit > 9 ? digit - 9 : digit;
+            }
+            return sum % 10 == 0;
+        }
+
+        public bool IsTestCard(string number)
+        {
+            return TestCards.Any(testCardNum => testCardNum == number);
         }
     }
 }
